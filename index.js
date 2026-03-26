@@ -40,7 +40,7 @@ app.post("/api/initiate-payment", async (req, res) => {
             return res.status(400).json({ message: "phone_number and amount are required" });
         }
 
-        const authHeader = Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
+        const authHeader = process.env.PAYHERO_TOKEN;
 
         // Payload according to latest PayHero requirements
         const payload = {
