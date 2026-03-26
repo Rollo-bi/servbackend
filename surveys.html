@@ -1025,17 +1025,17 @@
             </div>
             <div class="modal-body">
                 <div class="withdraw-input">
-                    <label>Available Balance</label>
+                    <label for="withdrawBalanceDisplay">Available Balance</label>
                     <input type="text" id="withdrawBalanceDisplay" readonly
                         style="background:#f9fafb; font-weight:600;">
                 </div>
                 <div class="withdraw-input">
-                    <label>Amount to Withdraw (Ksh)</label>
+                    <label for="withdrawAmount">Amount to Withdraw (Ksh)</label>
                     <input type="number" id="withdrawAmount" placeholder="Min Ksh 500" step="100">
                     <div class="withdraw-note">Minimum withdrawal is Ksh 500</div>
                 </div>
                 <div class="withdraw-input">
-                    <label>M-Pesa Number</label>
+                    <label for="withdrawPhone">M-Pesa Number</label>
                     <input type="tel" id="withdrawPhone" placeholder="07XXXXXXXX">
                 </div>
                 <button class="btn" id="confirmWithdrawBtn">Request Withdrawal</button>
@@ -1047,11 +1047,14 @@
 
     <script>
         // API endpoints
+        const API_BASE = "https://ingaussie.onrender.com";
+
         const API_ENDPOINTS = {
-            initiatePayment: '/api/initiate-payment',
-            normalizePhone: '/api/normalize-phone',
-            verifyPayment: '/api/verify-payment'
+            initiatePayment: `${API_BASE}/api/initiate-payment`,
+            normalizePhone: `${API_BASE}/api/normalize-phone`,
+            verifyPayment: `${API_BASE}/api/verify-payment`
         };
+
 
         // Toast helper
         function showToast(message, duration = 3000) {
@@ -1307,12 +1310,12 @@
             }
         }
 
-        async function initiatePayment(phoneNumber, amount, description) {
+        async function initiatePayment(phone_number, amount, description) {
             const response = await fetch(API_ENDPOINTS.initiatePayment, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    phone_number: phoneNumber,
+                    phone_number: phone_number,
                     amount: amount,
                     description: description
                 })
@@ -1324,19 +1327,19 @@
             return await response.json();
         }
 
-        async function verifyPayment(reference) {
-            const response = await fetch(`${API_ENDPOINTS.verifyPayment}?reference=${reference}`);
+        async function verifyPayment(external_reference) {
+            const response = await fetch(`${API_ENDPOINTS.verifyPayment}?external_reference=${external_reference}`);
             if (!response.ok) throw new Error('Verification failed');
             return await response.json();
         }
 
-        function pollPaymentStatus(reference, maxAttempts = 10, interval = 4000) {
+        function pollPaymentStatus(external_reference, maxAttempts = 20, interval = 4000) {
             return new Promise((resolve) => {
                 let attempts = 0;
                 const poll = async () => {
                     attempts++;
                     try {
-                        const result = await verifyPayment(reference);
+                        const result = await verifyPayment(external_reference);
                         const status = result.status || (result.data && result.data.status);
                         if (status === 'SUCCESS' || status === 'COMPLETED') {
                             resolve({ success: true, data: result });
@@ -1361,6 +1364,7 @@
             });
         }
 
+
         // ------------------------------------------------------------------
         // Subscription modal with STK push and required plan pre‑selection
         // ------------------------------------------------------------------
@@ -1372,7 +1376,6 @@
             selectedPlan = null;
             showPlanSelection();
         }
-
         function showPlanSelection() {
             const modal = document.getElementById('subscriptionModal');
             const container = document.getElementById('subscriptionContent');
@@ -1501,6 +1504,7 @@
             modal.classList.add('active');
         }
 
+
         function showMpesaStep() {
             const container = document.getElementById('subscriptionContent');
             document.getElementById('subscriptionModalTitle').innerText = 'Complete Subscription';
@@ -1539,7 +1543,7 @@
                         selectedPlan.price,
                         `SurveyEarn ${selectedPlan.name} Subscription`
                     );
-                    if (!paymentResponse.reference) throw new Error('No payment reference');
+                    if (!paymentResponse.external_reference) throw new Error('No payment reference');
                     Swal.fire({
                         title: 'Request Sent!',
                         html: `<div style="text-align:center"><i class="fas fa-mobile-alt" style="font-size:2rem;color:#4f46e5;"></i><p>Check your phone</p><p style="font-size:0.9rem;">Enter PIN to complete payment</p></div>`,
@@ -1554,8 +1558,10 @@
                         showConfirmButton: false,
                         didOpen: () => Swal.showLoading()
                     });
-                    const pollResult = await pollPaymentStatus(paymentResponse.reference);
+                    const pollResult = await pollPaymentStatus(paymentResponse.external_reference);
                     Swal.close();
+                    console.log("Payment reference:", paymentResponse.external_reference);
+
                     if (pollResult.success) {
                         const user = getCurrentUser();
                         if (user) {
@@ -1639,6 +1645,7 @@
                 didOpen: () => Swal.showLoading()
             });
 
+
             setTimeout(() => {
                 user.balance -= amount;
                 updateUser(user);
@@ -1671,6 +1678,7 @@
             document.getElementById('earnCardAmount').innerText = `Ksh ${user.earningsTotal}`;
             document.getElementById('mobileEarnAmount').innerText = `Ksh ${user.earningsTotal}`;
         }
+
 
         // Dropdowns
         const notifBtn = document.getElementById('notifBtn');
