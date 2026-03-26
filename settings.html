@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>SurveyEarn - Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <style>
+        /* === BASE STYLES (identical to dashboard) === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fa;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #fff;
+            border-right: 1px solid #eef2f6;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            transition: width 0.2s;
+        }
+
+        .sidebar-header {
+            padding: 24px 24px 0;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo i {
+            font-size: 24px;
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #4b5563;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 6px;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(249, 115, 22, 0.1));
+            color: #4f46e5;
+        }
+
+        .sidebar-footer {
+            padding: 24px 16px;
+            border-top: 1px solid #eef2f6;
+            margin-top: auto;
+        }
+
+        .earn-card {
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            border-radius: 16px;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .earn-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .earn-card h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .earn-card button {
+            width: 100%;
+            background: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #4f46e5;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        /* Main area */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .topbar {
+            background: #fff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eef2f6;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Dropdown styles */
+        .notif-wrapper,
+        .user-wrapper {
+            position: relative;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 260px;
+            padding: 12px;
+            display: none;
+            z-index: 100;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .user-info {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-info span {
+            font-size: 13px;
+            color: #6b7280;
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+        .logout {
+            color: #ef4444;
+        }
+
+        .dropdown-title {
+            font-weight: 600;
+            padding: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px;
+        }
+
+        /* Settings specific */
+        .setting-section {
+            background: #fff;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-outline {
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        .payment-method-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .payment-method-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .payment-method-input:focus {
+            border-color: #4f46e5;
+        }
+
+        .payment-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #eef2f6;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .payment-number {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn.edit {
+            color: #4f46e5;
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .action-btn.delete {
+            color: #ef4444;
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .profile-info {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f9fafb;
+            padding: 12px 20px;
+            border-radius: 16px;
+            min-width: 200px;
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .balance-box {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 16px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal styles (identical to dashboard) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: #fff;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #eef2f6;
+            background: #fff;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #4f46e5;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .withdraw-input {
+            margin-bottom: 20px;
+        }
+
+        .withdraw-input label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .withdraw-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .withdraw-input input:focus {
+            border-color: #4f46e5;
+        }
+
+        .withdraw-note {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .subscription-plan {
+            border: 1px solid #eef2f6;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .subscription-plan:hover {
+            border-color: #4f46e5;
+            background: #f9fafb;
+        }
+
+        .subscription-plan.selected {
+            border-color: #4f46e5;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(249, 115, 22, 0.05));
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .plan-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .plan-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+
+        .plan-features li i {
+            width: 18px;
+            font-size: 12px;
+            color: #10b981;
+        }
+
+        .mpesa-input {
+            margin: 16px 0;
+        }
+
+        .mpesa-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .mpesa-input input:focus {
+            border-color: #4f46e5;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .next-btn,
+        .submit-btn,
+        .back-btn {
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 24px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .back-btn {
+            background: #f3f4f6;
+            color: #4b5563;
+            margin-top: 12px;
+        }
+
+        .next-btn:hover,
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Loading spinner for delays */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #4f46e5;
+        }
+
+        .loading-spinner i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile balance card (only visible on mobile) */
+        .mobile-balance-card {
+            display: none;
+            background: linear-gradient(135deg, #4f46e5, #f97316);
+            border-radius: 20px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .mobile-balance-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .mobile-balance-card h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .mobile-balance-card button {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #4f46e5;
+            cursor: pointer;
+            transition: 0.2s;
+            width: auto;
+        }
+
+        /* Bottom navigation bar (mobile only) */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #eef2f6;
+            padding: 10px 0;
+            z-index: 100;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 12px;
+            transition: color 0.2s;
+            gap: 4px;
+        }
+
+        .nav-link i {
+            font-size: 22px;
+        }
+
+        .nav-link.active {
+            color: #4f46e5;
+        }
+
+        .nav-link span {
+            font-size: 10px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex;
+            }
+
+            .main {
+                margin-bottom: 70px;
+            }
+
+            .mobile-balance-card {
+                display: block;
+            }
+
+            .payment-method-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .payment-display {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .payment-actions {
+                justify-content: center;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .info-item {
+                width: 100%;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .balance-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .topbar {
+                padding: 12px 16px;
+            }
+
+            .page-title h1 {
+                font-size: 20px;
+            }
+
+            .user-area {
+                gap: 12px;
+            }
+
+            .avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .content {
+                padding: 16px;
+                padding-bottom: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-container {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-clipboard-list"></i>
+                <span>SurveyEarn</span>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="surveys.html" class="nav-item"><i class="fas fa-list"></i><span>Surveys</span></a>
+            <a href="referrals.html" class="nav-item"><i class="fas fa-user-friends"></i><span>Referrals</span></a>
+            <a href="settings.html" class="nav-item active"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <a href="help.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Help</span></a>
+        </div>
+        <div class="sidebar-footer">
+            <div class="earn-card">
+                <p>Earned so far</p>
+                <h3 id="earnCardAmount">Ksh 0</h3>
+                <button id="withdrawBtn">Withdraw</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Settings</h1>
+            </div>
+            <div class="user-area">
+                <div class="notif-wrapper">
+                    <i class="far fa-bell" id="notifBtn"></i>
+                    <div class="dropdown notif-dropdown" id="notifMenu">
+                        <p class="dropdown-title">Notifications</p>
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-wrapper">
+                    <div class="avatar" id="userBtn">EM</div>
+                    <div class="dropdown user-dropdown" id="userMenu">
+                        <div class="user-info">
+                            <strong id="userNameStrong">User</strong>
+                            <span id="userEmailSpan">user@example.com</span>
+                        </div>
+                        <div class="dropdown-item" id="settingsMenuItem"><i class="fas fa-cog"></i> Settings</div>
+                        <div class="dropdown-item logout" id="logoutMenuItem"><i class="fas fa-sign-out-alt"></i> Sign
+                            out</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Mobile balance card -->
+            <div class="mobile-balance-card" id="mobileBalanceCard">
+                <p>Earned so far</p>
+                <h3 id="mobileEarnAmount">Ksh 0</h3>
+                <button id="mobileWithdrawBtn">Withdraw</button>
+            </div>
+
+            <div class="setting-section">
+                <div class="section-header">
+                    <h3>Profile Information</h3>
+                </div>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <i class="fas fa-user"></i>
+                        <div>
+                            <p class="label">Name</p>
+                            <strong id="profileName">Ekure-Adzape Miracle</strong>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <p class="label">Email</p>
+                            <strong id="profileEmail">goapnaair@gmail.com</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="setting-section" id="paymentMethodSection">
+                <div class="section-header">
+                    <h3>Payment Method</h3>
+                </div>
+                <div id="paymentMethodContainer"></div>
+            </div>
+
+            <div class="setting-section">
+                <div class="section-header">
+                    <h3>Withdrawal</h3>
+                    <button class="btn-outline" id="withdrawSettingsBtn">Withdraw Funds</button>
+                </div>
+                <div class="balance-box">
+                    <div>
+                        <p>Available Balance</p>
+                        <h2 style="font-size:28px;" id="balanceDisplay">Ksh 0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <div class="section-header">
+                    <h3>Security</h3>
+                    <button class="btn-outline" id="changePasswordBtn">Change Password</button>
+                </div>
+                <div class="security-item">
+                    <i class="fas fa-lock" style="font-size:24px; color:#4f46e5;"></i>
+                    <div>
+                        <p><strong>Password</strong></p>
+                        <small id="lastChanged">Last changed: Never</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom navigation bar (mobile only) -->
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="surveys.html" class="nav-link">
+            <i class="fas fa-list"></i>
+            <span>Surveys</span>
+        </a>
+        <a href="referrals.html" class="nav-link">
+            <i class="fas fa-user-friends"></i>
+            <span>Referrals</span>
+        </a>
+        <a href="settings.html" class="nav-link active">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="help.html" class="nav-link">
+            <i class="fas fa-question-circle"></i>
+            <span>Help</span>
+        </a>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Subscription Modal (two-step with STK push) -->
+    <div id="subscriptionModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="subscriptionModalTitle">Choose a Subscription Plan</h3>
+                <button class="close-modal" onclick="closeModal('subscriptionModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="subscriptionContent"></div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal (simulated) -->
+    <div id="withdrawalModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Withdraw Funds</h3>
+                <button class="close-modal" onclick="closeModal('withdrawalModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="withdraw-input">
+                    <label>Available Balance</label>
+                    <input type="text" id="withdrawBalanceDisplay" readonly
+                        style="background:#f9fafb; font-weight:600;">
+                </div>
+                <div class="withdraw-input">
+                    <label>Amount to Withdraw (Ksh)</label>
+                    <input type="number" id="withdrawAmount" placeholder="Min Ksh 500" step="100">
+                    <div class="withdraw-note">Minimum withdrawal is Ksh 500</div>
+                </div>
+                <div class="withdraw-input">
+                    <label>M-Pesa Number</label>
+                    <input type="tel" id="withdrawPhone" placeholder="07XXXXXXXX">
+                </div>
+                <button class="btn" id="confirmWithdrawBtn">Request Withdrawal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal (custom, consistent styling) -->
+    <div id="changePasswordModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button class="close-modal" onclick="closeModal('changePasswordModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="withdraw-input">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                </div>
+                <div class="withdraw-input">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="At least 6 characters">
+                </div>
+                <div class="withdraw-input">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+                </div>
+                <button class="btn" id="updatePasswordBtn">Update Password</button>
+                <button class="back-btn" id="cancelPasswordBtn" style="margin-top:12px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        // ======================== API endpoints (STK push) ========================
+        const API_ENDPOINTS = {
+            initiatePayment: '/api/initiate-payment',
+            normalizePhone: '/api/normalize-phone',
+            verifyPayment: '/api/verify-payment'
+        };
+
+        // ======================== Helper functions ========================
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        function getCurrentUser() {
+            const session = sessionStorage.getItem('loggedInUser');
+            if (!session) return null;
+            const { email } = JSON.parse(session);
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            return users.find(u => u.email === email);
+        }
+
+        function updateUser(user) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const index = users.findIndex(u => u.email === user.email);
+            if (index !== -1) users[index] = user;
+            localStorage.setItem('users', JSON.stringify(users));
+            sessionStorage.setItem('loggedInUser', JSON.stringify({ email: user.email, name: user.name }));
+        }
+
+        function updateSettingsUI(user) {
+            document.getElementById('profileName').innerText = user.name;
+            document.getElementById('profileEmail').innerText = user.email;
+            document.getElementById('balanceDisplay').innerText = `Ksh ${user.balance}`;
+            document.getElementById('earnCardAmount').innerText = `Ksh ${user.earningsTotal}`;
+            document.getElementById('mobileEarnAmount').innerText = `Ksh ${user.earningsTotal}`;
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.querySelector('.avatar').innerText = initials;
+            document.getElementById('userNameStrong').innerText = user.name;
+            document.getElementById('userEmailSpan').innerText = user.email;
+            if (user.passwordLastChanged) {
+                document.getElementById('lastChanged').innerText = `Last changed: ${user.passwordLastChanged}`;
+            }
+            renderPaymentMethod(user);
+        }
+
+        // ======================== Payment Method UI ========================
+        function renderPaymentMethod(user) {
+            const container = document.getElementById('paymentMethodContainer');
+            if (!user.mpesaNumber) {
+                // Show input to add
+                container.innerHTML = `
+                    <div class="payment-method-row">
+                        <input type="tel" id="mpesaNumberInput" class="payment-method-input" placeholder="07XXXXXXXX">
+                        <button class="btn-outline" id="savePaymentMethodBtn">Save</button>
+                    </div>
+                `;
+                document.getElementById('savePaymentMethodBtn')?.addEventListener('click', () => savePaymentMethod());
+            } else {
+                // Show saved number with edit/delete
+                container.innerHTML = `
+                    <div class="payment-display">
+                        <div class="payment-number">
+                            <i class="fas fa-phone-alt" style="margin-right:8px;"></i>
+                            ${user.mpesaNumber}
+                        </div>
+                        <div class="payment-actions">
+                            <button class="action-btn edit" id="editPaymentBtn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete" id="deletePaymentBtn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('editPaymentBtn')?.addEventListener('click', () => editPaymentMethod());
+                document.getElementById('deletePaymentBtn')?.addEventListener('click', () => deletePaymentMethod());
+            }
+        }
+
+        function savePaymentMethod() {
+            const user = getCurrentUser();
+            if (!user) return;
+            const mpesa = document.getElementById('mpesaNumberInput').value.trim();
+            if (!mpesa) {
+                showToast('Please enter your M-Pesa number');
+                return;
+            }
+            if (!/^07\d{8}$/.test(mpesa)) {
+                showToast('Enter a valid M-Pesa number (07XXXXXXXX)');
+                return;
+            }
+            user.mpesaNumber = mpesa;
+            updateUser(user);
+            updateSettingsUI(user);
+            showToast('Payment method saved successfully');
+        }
+
+        function editPaymentMethod() {
+            const user = getCurrentUser();
+            if (!user) return;
+            // Switch to edit mode: show input with current number
+            const container = document.getElementById('paymentMethodContainer');
+            container.innerHTML = `
+                <div class="payment-method-row">
+                    <input type="tel" id="mpesaNumberInput" class="payment-method-input" placeholder="07XXXXXXXX" value="${user.mpesaNumber}">
+                    <button class="btn-outline" id="savePaymentMethodBtn">Save</button>
+                    <button class="btn-outline" id="cancelEditBtn" style="background:#f3f4f6; color:#4b5563;">Cancel</button>
+                </div>
+            `;
+            document.getElementById('savePaymentMethodBtn')?.addEventListener('click', () => savePaymentMethod());
+            document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
+                renderPaymentMethod(user); // revert to display mode
+            });
+        }
+
+        function deletePaymentMethod() {
+            const user = getCurrentUser();
+            if (!user) return;
+            Swal.fire({
+                title: 'Remove Payment Method?',
+                text: 'You will need to add a new M-Pesa number to withdraw funds.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, remove',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ef4444'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    user.mpesaNumber = null;
+                    updateUser(user);
+                    updateSettingsUI(user);
+                    showToast('Payment method removed');
+                }
+            });
+        }
+
+        // ======================== Payment helpers (STK push) ========================
+        async function normalizePhoneNumber(phone) {
+            try {
+                const response = await fetch(API_ENDPOINTS.normalizePhone, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                });
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                return data.normalized_phone || phone;
+            } catch {
+                return phone;
+            }
+        }
+
+        async function initiatePayment(phoneNumber, amount, description) {
+            const response = await fetch(API_ENDPOINTS.initiatePayment, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone_number: phoneNumber,
+                    amount: amount,
+                    description: description
+                })
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Payment initiation failed');
+            }
+            return await response.json();
+        }
+
+        async function verifyPayment(reference) {
+            const response = await fetch(`${API_ENDPOINTS.verifyPayment}?reference=${reference}`);
+            if (!response.ok) throw new Error('Verification failed');
+            return await response.json();
+        }
+
+        function pollPaymentStatus(reference, maxAttempts = 10, interval = 4000) {
+            return new Promise((resolve) => {
+                let attempts = 0;
+                const poll = async () => {
+                    attempts++;
+                    try {
+                        const result = await verifyPayment(reference);
+                        const status = result.status || (result.data && result.data.status);
+                        if (status === 'SUCCESS' || status === 'COMPLETED') {
+                            resolve({ success: true, data: result });
+                        } else if (['FAILED', 'CANCELLED', 'TIMEOUT'].includes(status)) {
+                            resolve({ success: false, error: `Payment ${status.toLowerCase()}` });
+                        } else {
+                            if (attempts >= maxAttempts) {
+                                resolve({ success: false, error: 'Payment timeout' });
+                            } else {
+                                setTimeout(poll, interval);
+                            }
+                        }
+                    } catch {
+                        if (attempts >= maxAttempts) {
+                            resolve({ success: false, error: 'Unable to verify' });
+                        } else {
+                            setTimeout(poll, interval);
+                        }
+                    }
+                };
+                poll();
+            });
+        }
+
+        // ======================== Subscription modal with STK push ========================
+        let pendingAction = null;
+        let selectedPlan = null;
+
+        function showSubscriptionModal(action) {
+            pendingAction = action;
+            selectedPlan = null;
+            showPlanSelection();
+        }
+
+        function showPlanSelection() {
+            const modal = document.getElementById('subscriptionModal');
+            const container = document.getElementById('subscriptionContent');
+            document.getElementById('subscriptionModalTitle').innerText = 'Choose a Subscription Plan';
+            container.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <p>Select a plan that fits your needs. All plans include withdrawals after reaching Ksh 500.</p>
+                </div>
+                <div class="subscription-plan" data-plan="Basic" data-price="199">
+                    <div class="plan-header">
+                        <span class="plan-name">Basic</span>
+                        <span class="plan-price">Ksh 199 / month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Access to free surveys</li>
+                        <li><i class="fas fa-check-circle"></i> Fast withdrawals</li>
+                        <li><i class="fas fa-check-circle"></i> Standard support</li>
+                    </ul>
+                </div>
+                <div class="subscription-plan" data-plan="Standard" data-price="399">
+                    <div class="plan-header">
+                        <span class="plan-name">Standard</span>
+                        <span class="plan-price">Ksh 399 / month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> All Basic benefits</li>
+                        <li><i class="fas fa-check-circle"></i> Access to standard surveys (Ksh 350–499)</li>
+                        <li><i class="fas fa-check-circle"></i> Priority support</li>
+                        <li><i class="fas fa-check-circle"></i> 2 surveys daily</li>
+                    </ul>
+                </div>
+                <div class="subscription-plan" data-plan="Standard Plus" data-price="499">
+                    <div class="plan-header">
+                        <span class="plan-name">Standard Plus</span>
+                        <span class="plan-price">Ksh 499 / month</span>
+                        <span style="font-size:0.7rem; background:#f97316; color:white; padding:2px 8px; border-radius:20px;">BEST VALUE</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> All Standard benefits</li>
+                        <li><i class="fas fa-check-circle"></i> 5 surveys daily</li>
+                        <li><i class="fas fa-check-circle"></i> Up to Ksh 1,000 daily earnings</li>
+                    </ul>
+                </div>
+                <div class="subscription-plan" data-plan="Premium" data-price="799">
+                    <div class="plan-header">
+                        <span class="plan-name">Premium</span>
+                        <span class="plan-price">Ksh 799 / month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> All Standard Plus benefits</li>
+                        <li><i class="fas fa-check-circle"></i> Access to premium surveys (up to Ksh 760)</li>
+                        <li><i class="fas fa-check-circle"></i> 10 premium surveys daily</li>
+                        <li><i class="fas fa-check-circle"></i> Up to Ksh 2,500 daily earnings</li>
+                    </ul>
+                </div>
+                <div class="subscription-plan" data-plan="Premium Plus" data-price="999">
+                    <div class="plan-header">
+                        <span class="plan-name">Premium Plus</span>
+                        <span class="plan-price">Ksh 999 / month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> All Premium benefits</li>
+                        <li><i class="fas fa-check-circle"></i> 15 premium surveys daily</li>
+                        <li><i class="fas fa-check-circle"></i> Up to Ksh 3,500 daily earnings</li>
+                    </ul>
+                </div>
+                <div class="subscription-plan" data-plan="Platinum" data-price="1499">
+                    <div class="plan-header">
+                        <span class="plan-name">Platinum</span>
+                        <span class="plan-price">Ksh 1499 / month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> All Premium Plus benefits</li>
+                        <li><i class="fas fa-check-circle"></i> 5 moderator surveys daily</li>
+                        <li><i class="fas fa-check-circle"></i> Up to Ksh 5,000 daily earnings</li>
+                    </ul>
+                </div>
+                <button class="next-btn" id="nextToMpesa">Continue</button>
+            `;
+            document.querySelectorAll('.subscription-plan').forEach(plan => {
+                plan.addEventListener('click', () => {
+                    document.querySelectorAll('.subscription-plan').forEach(p => p.classList.remove('selected'));
+                    plan.classList.add('selected');
+                    selectedPlan = {
+                        name: plan.getAttribute('data-plan'),
+                        price: parseInt(plan.getAttribute('data-price'))
+                    };
+                });
+            });
+            document.getElementById('nextToMpesa').addEventListener('click', () => {
+                if (!selectedPlan) {
+                    showToast('Please select a plan');
+                    return;
+                }
+                showMpesaStep();
+            });
+            modal.classList.add('active');
+        }
+
+        function showMpesaStep() {
+            const container = document.getElementById('subscriptionContent');
+            document.getElementById('subscriptionModalTitle').innerText = 'Complete Subscription';
+            container.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <p>You've selected <strong>${selectedPlan.name}</strong> plan (Ksh ${selectedPlan.price}).</p>
+                    <p>Enter your M-Pesa number to pay Ksh ${selectedPlan.price}.</p>
+                </div>
+                <div class="mpesa-input">
+                    <input type="tel" id="mpesaNumber" placeholder="07XXXXXXXX" style="width:100%; padding:12px; border:1px solid #eef2f6; border-radius:12px;">
+                </div>
+                <button class="btn" id="confirmSubscription">Subscribe Now</button>
+                <button class="back-btn" id="backToPlans">← Back to plans</button>
+            `;
+            document.getElementById('confirmSubscription').addEventListener('click', async () => {
+                const rawPhone = document.getElementById('mpesaNumber').value.trim();
+                if (!rawPhone) {
+                    showToast('Please enter your M-Pesa number');
+                    return;
+                }
+                let normalizedPhone;
+                try {
+                    normalizedPhone = await normalizePhoneNumber(rawPhone);
+                } catch {
+                    normalizedPhone = rawPhone;
+                }
+                Swal.fire({
+                    title: 'Processing',
+                    html: '<div style="padding:0.5rem;">Please wait...</div>',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+                try {
+                    const paymentResponse = await initiatePayment(
+                        normalizedPhone,
+                        selectedPlan.price,
+                        `SurveyEarn ${selectedPlan.name} Subscription`
+                    );
+                    if (!paymentResponse.reference) throw new Error('No payment reference');
+                    Swal.fire({
+                        title: 'Request Sent!',
+                        html: `<div style="text-align:center"><i class="fas fa-mobile-alt" style="font-size:2rem;color:#4f46e5;"></i><p>Check your phone</p><p style="font-size:0.9rem;">Enter PIN to complete payment</p></div>`,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+                    Swal.fire({
+                        title: 'Verifying Payment',
+                        html: '<div class="loading-spinner" style="padding:1rem;"><i class="fas fa-spinner fa-pulse fa-2x"></i><p style="margin-top:12px">Please wait while we confirm your payment...</p></div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                    const pollResult = await pollPaymentStatus(paymentResponse.reference);
+                    Swal.close();
+                    if (pollResult.success) {
+                        const user = getCurrentUser();
+                        if (user) {
+                            user.subscription = {
+                                plan: selectedPlan.name,
+                                expiry: Date.now() + 30 * 24 * 60 * 60 * 1000
+                            };
+                            user.mpesaNumber = normalizedPhone;
+                            updateUser(user);
+                            closeModal('subscriptionModal');
+                            Swal.fire({
+                                title: 'Subscription Active!',
+                                html: `<div style="text-align:center"><i class="fas fa-check-circle" style="font-size:2rem;color:#10b981;"></i><p>Your ${selectedPlan.name} plan is now active.</p></div>`,
+                                confirmButtonText: 'Great!',
+                                confirmButtonColor: '#4f46e5'
+                            });
+                            if (pendingAction === 'withdraw') {
+                                showWithdrawalModal();
+                            }
+                            pendingAction = null;
+                            selectedPlan = null;
+                        }
+                    } else {
+                        throw new Error(pollResult.error || 'Payment failed');
+                    }
+                } catch (err) {
+                    Swal.fire({
+                        title: 'Payment Failed',
+                        html: `<div style="text-align:center"><i class="fas fa-times-circle" style="font-size:2rem;color:#ef4444;"></i><p>${err.message}</p></div>`,
+                        confirmButtonText: 'Try Again',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                }
+            });
+            document.getElementById('backToPlans').addEventListener('click', () => {
+                showPlanSelection();
+            });
+        }
+
+        // ======================== Withdrawal simulation ========================
+        function showWithdrawalModal() {
+            const user = getCurrentUser();
+            if (!user) return;
+            if (user.balance < 500) {
+                showToast('Minimum withdrawal is Ksh 500');
+                return;
+            }
+            if (!user.mpesaNumber) {
+                showToast('Please add your M-Pesa number in Payment Method first');
+                return;
+            }
+            document.getElementById('withdrawBalanceDisplay').value = `Ksh ${user.balance}`;
+            document.getElementById('withdrawAmount').value = '';
+            document.getElementById('withdrawPhone').value = user.mpesaNumber;
+            document.getElementById('withdrawalModal').classList.add('active');
+        }
+
+        function processWithdrawal() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const phone = document.getElementById('withdrawPhone').value.trim();
+
+            if (isNaN(amount) || amount < 500) {
+                showToast('Please enter a valid amount (minimum Ksh 500)');
+                return;
+            }
+            if (amount > user.balance) {
+                showToast('Amount exceeds available balance');
+                return;
+            }
+            if (!phone || !/^07\d{8}$/.test(phone)) {
+                showToast('Enter a valid M-Pesa number (07XXXXXXXX)');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Processing Withdrawal',
+                html: '<div style="padding:0.5rem;">Please wait...</div>',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            setTimeout(() => {
+                user.balance -= amount;
+                updateUser(user);
+                updateSettingsUI(user);
+                closeModal('withdrawalModal');
+                Swal.fire({
+                    title: 'Withdrawal Initiated!',
+                    html: `<div style="text-align:center">
+                            <i class="fas fa-clock" style="font-size:2rem;color:#f59e0b;"></i>
+                            <p>Ksh ${amount} will be sent to ${phone}</p>
+                            <p style="font-size:0.85rem;">Please allow 24 hours for processing.</p>
+                           </div>`,
+                    confirmButtonText: 'Got it',
+                    confirmButtonColor: '#4f46e5'
+                });
+                document.getElementById('earnCardAmount').innerText = `Ksh ${user.earningsTotal}`;
+                document.getElementById('mobileEarnAmount').innerText = `Ksh ${user.earningsTotal}`;
+            }, 2000);
+        }
+
+        // ======================== Change Password (custom modal) ========================
+        function showChangePasswordModal() {
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('changePasswordModal').classList.add('active');
+        }
+
+        function updatePassword() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const currentPwd = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirmPwd = document.getElementById('confirmPassword').value;
+
+            if (!currentPwd || !newPwd || !confirmPwd) {
+                showToast('All fields are required');
+                return;
+            }
+            if (user.password !== currentPwd) {
+                showToast('Current password is incorrect');
+                return;
+            }
+            if (newPwd.length < 6) {
+                showToast('New password must be at least 6 characters');
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                showToast('New passwords do not match');
+                return;
+            }
+
+            user.password = newPwd;
+            user.passwordLastChanged = new Date().toLocaleDateString();
+            updateUser(user);
+            updateSettingsUI(user);
+            closeModal('changePasswordModal');
+            Swal.fire('Success', 'Your password has been updated.', 'success');
+        }
+
+        // ======================== Dropdowns and other UI handlers ========================
+        const notifBtn = document.getElementById('notifBtn');
+        const notifMenu = document.getElementById('notifMenu');
+        const userBtn = document.getElementById('userBtn');
+        const userMenu = document.getElementById('userMenu');
+
+        function toggleDropdown(menu, btn, e) {
+            e.stopPropagation();
+            if (menu === notifMenu && userMenu.classList.contains('show')) userMenu.classList.remove('show');
+            else if (menu === userMenu && notifMenu.classList.contains('show')) notifMenu.classList.remove('show');
+            menu.classList.toggle('show');
+        }
+
+        notifBtn.addEventListener('click', (e) => toggleDropdown(notifMenu, notifBtn, e));
+        userBtn.addEventListener('click', (e) => toggleDropdown(userMenu, userBtn, e));
+        document.addEventListener('click', function (event) {
+            if (!notifBtn.contains(event.target) && !notifMenu.contains(event.target)) notifMenu.classList.remove('show');
+            if (!userBtn.contains(event.target) && !userMenu.contains(event.target)) userMenu.classList.remove('show');
+        });
+
+        document.getElementById('settingsMenuItem').addEventListener('click', () => {
+            window.location.href = 'settings.html';
+        });
+        document.getElementById('logoutMenuItem').addEventListener('click', () => {
+            sessionStorage.removeItem('loggedInUser');
+            localStorage.removeItem('rememberedUser');
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('withdrawBtn').addEventListener('click', () => {
+            const user = getCurrentUser();
+            if (!user) return;
+            if (user.balance < 500) {
+                showToast('Minimum withdrawal is Ksh 500');
+                return;
+            }
+            if (!user.mpesaNumber) {
+                showToast('Please add your M-Pesa number in Settings first');
+                return;
+            }
+            if (!user.subscription) {
+                showSubscriptionModal('withdraw');
+            } else {
+                showWithdrawalModal();
+            }
+        });
+
+        document.getElementById('withdrawSettingsBtn').addEventListener('click', () => {
+            const user = getCurrentUser();
+            if (!user) return;
+            if (user.balance < 500) {
+                showToast('Minimum withdrawal is Ksh 500');
+                return;
+            }
+            if (!user.mpesaNumber) {
+                showToast('Please add your M-Pesa number in Payment Method first');
+                return;
+            }
+            if (!user.subscription) {
+                showSubscriptionModal('withdraw');
+            } else {
+                showWithdrawalModal();
+            }
+        });
+
+        document.getElementById('mobileWithdrawBtn').addEventListener('click', () => {
+            const user = getCurrentUser();
+            if (!user) return;
+            if (user.balance < 500) {
+                showToast('Minimum withdrawal is Ksh 500');
+                return;
+            }
+            if (!user.mpesaNumber) {
+                showToast('Please add your M-Pesa number in Settings first');
+                return;
+            }
+            if (!user.subscription) {
+                showSubscriptionModal('withdraw');
+            } else {
+                showWithdrawalModal();
+            }
+        });
+
+        document.getElementById('changePasswordBtn').addEventListener('click', showChangePasswordModal);
+        document.getElementById('updatePasswordBtn').addEventListener('click', updatePassword);
+        document.getElementById('cancelPasswordBtn').addEventListener('click', () => closeModal('changePasswordModal'));
+        document.getElementById('confirmWithdrawBtn').addEventListener('click', processWithdrawal);
+
+        const user = getCurrentUser();
+        if (!user) {
+            window.location.href = 'signup.html';
+        } else {
+            updateSettingsUI(user);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        window.closeModal = closeModal;
+    </script>
+</body>
+
+</html>
