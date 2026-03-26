@@ -76,7 +76,7 @@ app.get("/api/verify-payment", async (req, res) => {
         const { external_reference } = req.query;
         if (!external_reference) return res.status(400).json({ message: "Transaction reference is required" });
 
-        const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
+        const authHeader = process.env.PAYHERO_TOKEN;
 
         const response = await axios.get(
             `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${external_reference}`,
