@@ -39,7 +39,6 @@ app.post("/api/initiate-payment", async (req, res) => {
         if (!phone_number || !amount) {
             return res.status(400).json({ message: "phone_number and amount are required" });
         }
-    const external_reference = "SUB-" + Date.now();
         const authHeader = process.env.PAYHERO_TOKEN;
 
         // Payload according to latest PayHero requirements
@@ -48,7 +47,7 @@ app.post("/api/initiate-payment", async (req, res) => {
             phone_number: phone_number,
             channel_id: 4643,                       // your STK Push channel
             provider: "m-pesa",
-            external_reference, // unique reference
+            external_reference : "SUB-" + Date.now(), // unique reference
             callback_url: "https://TALAkash.online/callback",
             description: description || "Subscription Payment"
         };
@@ -84,15 +83,18 @@ app.get("/api/verify-payment", async (req, res) => {
             { headers: { Authorization: authHeader } }
         );
 
+        console.log("PayHero response:", response.data); // <-- log PayHero response
+
         res.json(response.data);
     } catch (error) {
-        console.error(error.response?.data || error.message);
+        console.error("Verification error:", error.response?.data || error.message);
         res.status(400).json({
             message: "Verification failed",
             error: error.response?.data || error.message
         });
     }
 });
+
 
 // -------------------------------
 // 4. Start Server
