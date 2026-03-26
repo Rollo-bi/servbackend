@@ -1,3 +1,5 @@
+// server.js
+require("dotenv").config(); // Load environment variables
 const express = require("express");
 const axios = require("axios");
 const app = express();
@@ -8,21 +10,26 @@ app.use(express.json());
    1. Normalize Phone
 --------------------------------*/
 app.post("/normalize-phone", (req, res) => {
-    let { phone } = req.body;
+    try {
+        let { phone } = req.body;
 
-    phone = phone.replace(/\D/g, "");
+        if (!phone) {
+            return res.status(400).json({ message: "Phone number is required" });
+        }
 
-    if (phone.startsWith("07")) {
-        phone = "254" + phone.substring(1);
+        phone = phone.replace(/\D/g, "");
+
+        if (phone.startsWith("07")) {
+            phone = "254" + phone.substring(1);
+        } else if (phone.startsWith("7")) {
+            phone = "254" + phone;
+        }
+
+        res.json({ normalized_phone: phone });
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
     }
-
-    if (phone.startsWith("7")) {
-        phone = "254" + phone;
-    }
-
-    res.json({ normalized_phone: phone });
 });
-
 
 /* -------------------------------
    2. Initiate Payment (STK)
@@ -31,30 +38,30 @@ app.post("/initiate-payment", async (req, res) => {
     try {
         const { phone_number, amount, description } = req.body;
 
+        if (!phone_number || !amount || !description) {
+            return res.status(400).json({ message: "phone_number, amount, and description are required" });
+        }
+
         const response = await axios.post(
             "https://backend.payhero.co.ke/api/v2/payments",
-            {
-                phone_number,
-                amount,
-                description
-            },
+            { phone_number, amount, description },
             {
                 headers: {
-                    Authorization: "Basic YOUR_TOKEN",
+                    Authorization: `Basic ${process.env.PAYHERO_TOKEN}`,
                     "Content-Type": "application/json"
                 }
             }
         );
 
         res.json(response.data);
-
     } catch (error) {
+        console.error(error.response?.data || error.message);
         res.status(400).json({
-            message: "Payment initiation failed"
+            message: "Payment initiation failed",
+            error: error.response?.data || error.message
         });
     }
 });
-
 
 /* -------------------------------
    3. Verify Payment
@@ -63,25 +70,33 @@ app.get("/verify-payment", async (req, res) => {
     try {
         const { reference } = req.query;
 
+        if (!reference) {
+            return res.status(400).json({ message: "Transaction reference is required" });
+        }
+
         const response = await axios.get(
             `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${reference}`,
             {
                 headers: {
-                    Authorization: "Basic YOUR_TOKEN"
+                    Authorization: `Basic ${process.env.PAYHERO_TOKEN}`
                 }
             }
         );
 
         res.json(response.data);
-
-    } catch {
+    } catch (error) {
+        console.error(error.response?.data || error.message);
         res.status(400).json({
-            message: "Verification failed"
+            message: "Verification failed",
+            error: error.response?.data || error.message
         });
     }
 });
 
-
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+/* -------------------------------
+   4. Start Server
+--------------------------------*/
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
