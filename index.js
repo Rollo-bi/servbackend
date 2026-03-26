@@ -39,7 +39,7 @@ app.post("/api/initiate-payment", async (req, res) => {
         if (!phone_number || !amount) {
             return res.status(400).json({ message: "phone_number and amount are required" });
         }
-
+    const external_reference = "SUB-" + Date.now();
         const authHeader = process.env.PAYHERO_TOKEN;
 
         // Payload according to latest PayHero requirements
@@ -48,7 +48,7 @@ app.post("/api/initiate-payment", async (req, res) => {
             phone_number: phone_number,
             channel_id: 4643,                       // your STK Push channel
             provider: "m-pesa",
-            external_reference: "SUB-" + Date.now(), // unique reference
+            external_reference, // unique reference
             callback_url: "https://TALAkash.online/callback",
             description: description || "Subscription Payment"
         };
@@ -74,13 +74,13 @@ app.post("/api/initiate-payment", async (req, res) => {
 // -------------------------------
 app.get("/api/verify-payment", async (req, res) => {
     try {
-        const { reference } = req.query;
-        if (!reference) return res.status(400).json({ message: "Transaction reference is required" });
+        const { external_reference } = req.query;
+        if (!external_reference) return res.status(400).json({ message: "Transaction reference is required" });
 
         const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
 
         const response = await axios.get(
-            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${reference}`,
+            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${external_reference}`,
             { headers: { Authorization: authHeader } }
         );
 
