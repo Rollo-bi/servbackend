@@ -1,33 +1,28 @@
 // server.js
-require("dotenv").config(); // Load environment variables
+require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 const app = express();
-const cors = require("cors");   // ← ADD THIS
+
 app.use(express.json());
 
+// Enable CORS for your frontend
 app.use(cors({
-    origin: "https://surv-ten.vercel.app"
+    origin: "https://surv-ten.vercel.app" // your Vercel frontend
 }));
 
-/* -------------------------------
-   1. Normalize Phone
---------------------------------*/
+// -------------------------------
+// 1. Normalize Phone
+// -------------------------------
 app.post("/api/normalize-phone", (req, res) => {
     try {
         let { phone } = req.body;
-
-        if (!phone) {
-            return res.status(400).json({ message: "Phone number is required" });
-        }
+        if (!phone) return res.status(400).json({ message: "Phone number is required" });
 
         phone = phone.replace(/\D/g, "");
-
-        if (phone.startsWith("07")) {
-            phone = "254" + phone.substring(1);
-        } else if (phone.startsWith("7")) {
-            phone = "254" + phone;
-        }
+        if (phone.startsWith("07")) phone = "254" + phone.substring(1);
+        else if (phone.startsWith("7")) phone = "254" + phone;
 
         res.json({ normalized_phone: phone });
     } catch (err) {
@@ -35,26 +30,23 @@ app.post("/api/normalize-phone", (req, res) => {
     }
 });
 
-/* -------------------------------
-   2. Initiate Payment (STK)
---------------------------------*/
+// -------------------------------
+// 2. Initiate Payment (STK)
+// -------------------------------
 app.post("/api/initiate-payment", async (req, res) => {
     try {
         const { phone_number, amount, description } = req.body;
-
         if (!phone_number || !amount || !description) {
             return res.status(400).json({ message: "phone_number, amount, and description are required" });
         }
 
+        // Proper Basic Auth header
+        const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
+
         const response = await axios.post(
             "https://backend.payhero.co.ke/api/v2/payments",
             { phone_number, amount, description },
-            {
-                headers: {
-                    Authorization: `Basic ${process.env.PAYHERO_TOKEN}`,
-                    "Content-Type": "application/json"
-                }
-            }
+            { headers: { Authorization: authHeader, "Content-Type": "application/json" } }
         );
 
         res.json(response.data);
@@ -67,24 +59,19 @@ app.post("/api/initiate-payment", async (req, res) => {
     }
 });
 
-/* -------------------------------
-   3. Verify Payment
---------------------------------*/
+// -------------------------------
+// 3. Verify Payment
+// -------------------------------
 app.get("/api/verify-payment", async (req, res) => {
     try {
         const { reference } = req.query;
+        if (!reference) return res.status(400).json({ message: "Transaction reference is required" });
 
-        if (!reference) {
-            return res.status(400).json({ message: "Transaction reference is required" });
-        }
+        const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
 
         const response = await axios.get(
             `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${reference}`,
-            {
-                headers: {
-                    Authorization: `Basic ${process.env.PAYHERO_TOKEN}`
-                }
-            }
+            { headers: { Authorization: authHeader } }
         );
 
         res.json(response.data);
@@ -97,9 +84,9 @@ app.get("/api/verify-payment", async (req, res) => {
     }
 });
 
-/* -------------------------------
-   4. Start Server
---------------------------------*/
+// -------------------------------
+// 4. Start Server
+// -------------------------------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
