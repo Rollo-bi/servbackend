@@ -58,7 +58,12 @@ app.post("/api/initiate-payment", async (req, res) => {
             { headers: { Authorization: authHeader, "Content-Type": "application/json" } }
         );
 
-        res.json(response.data);
+       res.json({
+    ...response.data,
+    reference: response.data.reference
+});
+
+        
     } catch (error) {
         console.error("PayHero payment error:", error.response?.data || error.message);
         res.status(400).json({
@@ -71,30 +76,39 @@ app.post("/api/initiate-payment", async (req, res) => {
 // -------------------------------
 // 3. Verify Payment
 // -------------------------------
+// -------------------------------
+// 3. Verify Payment
+// -------------------------------
 app.get("/api/verify-payment", async (req, res) => {
     try {
-        const { external_reference } = req.query;
-        if (!external_reference) return res.status(400).json({ message: "Transaction reference is required" });
+        const { reference, external_reference } = req.query;
+
+        const ref = reference || external_reference;
+
+        if (!ref) {
+            return res.status(400).json({ message: "Transaction reference is required" });
+        }
 
         const authHeader = process.env.PAYHERO_TOKEN;
 
         const response = await axios.get(
-            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${external_reference}`,
+            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${ref}`,
             { headers: { Authorization: authHeader } }
         );
 
-        console.log("PayHero response:", response.data); // <-- log PayHero response
+        console.log("PayHero response:", response.data);
 
         res.json(response.data);
+
     } catch (error) {
         console.error("Verification error:", error.response?.data || error.message);
+
         res.status(400).json({
             message: "Verification failed",
             error: error.response?.data || error.message
         });
     }
 });
-
 
 // -------------------------------
 // 4. Start Server
