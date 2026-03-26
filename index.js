@@ -79,11 +79,6 @@ app.post("/api/initiate-payment", async (req, res) => {
 // -------------------------------
 // 3. Verify Payment
 // -------------------------------
-
-
-
-
-
 app.get("/api/verify-payment", async (req, res) => {
     try {
         const { reference, external_reference } = req.query;
