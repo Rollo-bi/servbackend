@@ -41,7 +41,7 @@ app.post("/api/initiate-payment", async (req, res) => {
         }
 
         // Proper Basic Auth header
-        const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
+        const authHeader = Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
 
         const response = await axios.post(
             "https://backend.payhero.co.ke/api/v2/payments",
