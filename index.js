@@ -9,7 +9,7 @@ app.use(express.json());
 /* -------------------------------
    1. Normalize Phone
 --------------------------------*/
-app.post("/normalize-phone", (req, res) => {
+app.post("api/normalize-phone", (req, res) => {
     try {
         let { phone } = req.body;
 
@@ -34,7 +34,7 @@ app.post("/normalize-phone", (req, res) => {
 /* -------------------------------
    2. Initiate Payment (STK)
 --------------------------------*/
-app.post("/initiate-payment", async (req, res) => {
+app.post("/api/initiate-payment", async (req, res) => {
     try {
         const { phone_number, amount, description } = req.body;
 
@@ -66,7 +66,7 @@ app.post("/initiate-payment", async (req, res) => {
 /* -------------------------------
    3. Verify Payment
 --------------------------------*/
-app.get("/verify-payment", async (req, res) => {
+app.get("/api/verify-payment", async (req, res) => {
     try {
         const { reference } = req.query;
 
