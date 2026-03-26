@@ -3,13 +3,17 @@ require("dotenv").config(); // Load environment variables
 const express = require("express");
 const axios = require("axios");
 const app = express();
-
+const cors = require("cors");   // ← ADD THIS
 app.use(express.json());
+
+app.use(cors({
+    origin: "https://surv-ten.vercel.app"
+}));
 
 /* -------------------------------
    1. Normalize Phone
 --------------------------------*/
-app.post("api/normalize-phone", (req, res) => {
+app.post("/api/normalize-phone", (req, res) => {
     try {
         let { phone } = req.body;
 
