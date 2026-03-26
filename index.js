@@ -79,33 +79,45 @@ app.post("/api/initiate-payment", async (req, res) => {
 // -------------------------------
 // 3. Verify Payment
 // -------------------------------
+// In-memory store for completed transactions
+const completedPayments = {}; // { external_reference: true }
+
+// Callback endpoint that PayHero will call
+app.post("/api/callback", (req, res) => {
+    const data = req.body;
+    console.log("PayHero callback received:", data);
+
+    // Mark payment as completed
+    if (data.reference && data.status === "COMPLETED") {
+        completedPayments[data.reference] = true;
+    }
+
+    res.status(200).json({ received: true });
+});
+
+
+
+
+
+// Update verify-payment endpoint to check callback status
 app.get("/api/verify-payment", async (req, res) => {
     try {
-        const { reference, external_reference } = req.query;
+        const { external_reference } = req.query;
+        if (!external_reference) return res.status(400).json({ message: "Transaction reference is required" });
 
-        const ref = reference || external_reference;
+        // Check if the transaction has been marked completed via callback
+        const isCompleted = !!completedPayments[external_reference];
 
-        if (!ref) {
-            return res.status(400).json({ message: "Transaction reference is required" });
-        }
-
-        const authHeader = process.env.PAYHERO_TOKEN;
-
-        const response = await axios.get(
-            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${ref}`,
-            { headers: { Authorization: authHeader } }
-        );
-
-        console.log("PayHero response:", response.data);
-
-        res.json(response.data);
+        res.json({
+            external_reference,
+            subscription_activated: isCompleted
+        });
 
     } catch (error) {
-        console.error("Verification error:", error.response?.data || error.message);
-
+        console.error("Verification error:", error.message);
         res.status(400).json({
             message: "Verification failed",
-            error: error.response?.data || error.message
+            error: error.message
         });
     }
 });
