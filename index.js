@@ -80,7 +80,7 @@ app.get("/api/verify-payment", async (req, res) => {
         const authHeader = "Basic " + Buffer.from(process.env.PAYHERO_TOKEN + ":").toString("base64");
 
         const response = await axios.get(
-            `https://backend.payhero.co.ke/api/v2/transaction-status?reference=${external_reference}`,
+            `https://backend.payhero.co.ke/api/v2/transaction-status?external_reference=${external_reference}`,
             { headers: { Authorization: authHeader } }
         );
 
