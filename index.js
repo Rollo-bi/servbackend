@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Enable CORS for your frontend
 app.use(cors({
-    origin: "https://surv-ten.vercel.app" // your Vercel frontend
+    origin: "https://survey-twenie.vercel.app/" // your Vercel frontend
 }));
 
 // -------------------------------
