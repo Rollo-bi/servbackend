@@ -4,13 +4,19 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const app = express();
+app.use(cors({
+    origin: "https://surv-ten.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
 
+// Handle preflight requests
+app.options("*", cors());
 app.use(express.json());
 
 // Enable CORS for your frontend
-app.use(cors({
-    origin: "https://surv-ten.vercel.app" // your Vercel frontend
-}));
+
 
 // -------------------------------
 // 1. Normalize Phone
