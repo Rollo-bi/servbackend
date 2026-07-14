@@ -5,7 +5,7 @@ const axios = require("axios");
 const cors = require("cors");
 const app = express();
 app.use(cors({
-    origin: "https://surv-ten.vercel.app",
+    origin: ["https://surv-ten.vercel.app","https://remotes-tasks.vercel.app/"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
