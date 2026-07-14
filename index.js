@@ -51,7 +51,7 @@ app.post("/api/initiate-payment", async (req, res) => {
         const payload = {
             amount: Number(amount),
             phone_number: phone_number,
-            channel_id: 4643,                       // your STK Push channel
+            channel_id: 4707,                       // your STK Push channel
             provider: "m-pesa",
             external_reference : "SUB-" + Date.now(), // unique reference
             callback_url: "https://TALAkash.online/callback",
